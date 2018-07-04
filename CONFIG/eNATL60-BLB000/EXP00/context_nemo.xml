@@ -5,9 +5,11 @@
 -->
 <context id="nemo">
   <!-- $id$ -->
+
+
   <variable_definition>
     <!-- Year of time origin for NetCDF files; defaults to 1800 -->
-    <variable id="ref_year" type="int"   > 1800 </variable>
+    <variable id="ref_year" type="int"   > 1970 </variable>    <!-- #LOLO  => UNIX epoch time.... -->
     <variable id="rau0"     type="float" > 1026.0 </variable>
     <variable id="cpocean"  type="float" > 3991.86795711963 </variable>
     <variable id="convSpsu" type="float" > 0.99530670233846  </variable>
@@ -15,6 +17,7 @@
     <variable id="rhosn"    type="float" > 330.0 </variable>
     <variable id="missval"  type="float" > 1.e20 </variable>
   </variable_definition>
+
   <!-- Fields definition -->
   <field_definition src="./field_def_nemo-opa.xml"/>    <!--  NEMO ocean dynamics     -->
   <field_definition src="./field_def_nemo-lim.xml"/>    <!--  NEMO sea-ice model      -->
@@ -22,6 +25,7 @@
   <!-- Files definition -->
   <file_definition src="./file_def_nemo-opa.xml"/>     <!--  NEMO ocean dynamics      -->
   <file_definition src="./file_def_nemo-lim.xml"/>     <!--  NEMO sea-ice model       -->
+
   <!--
       ============================================================================================================
       = grid definition = = DO NOT CHANGE =
@@ -114,7 +118,7 @@
     <grid id="grid_BlackSeaV" >
       <domain domain_ref="BlackSeaV" />
     </grid>
-    
+
     <grid id="grid_BlackSeaT_3D" >
       <domain domain_ref="BlackSeaT" />
       <axis id="deptht" />
