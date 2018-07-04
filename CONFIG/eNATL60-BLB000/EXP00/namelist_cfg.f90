@@ -62,13 +62,6 @@
                            !
    rn_rdt      =   60.     !  time step for the dynamics (and tracer if nn_acc=0)
  
-   ln_crs      = .false.      !  Logical switch for coarsening module
-   jphgr_msh   =       0               !  type of horizontal mesh
-                                       !  = 0 curvilinear coordinate on the sphere read in coordinate.nc
-                                       !  = 1 geographical mesh on the sphere with regular grid-spacing
-                                       !  = 2 f-plane with regular grid-spacing
-                                       !  = 3 beta-plane with regular grid-spacing
-                                       !  = 4 Mercator grid with T/U point at the equator
    ppglam0     =  999999.d0            !  longitude of first raw and column T-point (jphgr_msh = 1)
    ppgphi0     =  999999.d0            ! latitude  of first raw and column T-point (jphgr_msh = 1)
    ppe1_deg    =  999999.d0            !  zonal      grid-spacing (degrees)
@@ -82,7 +75,7 @@
    ppacr       =    38.4998412469d0    !
    ppdzmin     =        999999.d0      !  Minimum vertical spacing
    pphmax      =        999999.d0      !  Maximum depth
-   ldbletanh   =           .TRUE.      !  Use/do not use double tanf function for vertical coordinates
+   ldbletanh   =           .true.      !  Use/do not use double tanf function for vertical coordinates
    ppa2        =  20.1768193931d0      !  Double tanh function parameters
    ppkth2      =  31.5541059316d0      !
    ppacr2      =  121.356963487d0      !
@@ -91,8 +84,8 @@
 &namsplit      !   time splitting parameters                            ("key_dynspg_ts")
 !-----------------------------------------------------------------------
    ln_bt_fw      =    .false.          !LOLO?  Forward integration of barotropic equations
-   ln_bt_av      =    .TRUE.           !  Time filtering of barotropic variables
-   ln_bt_nn_auto =    .TRUE.           !  Set nn_baro automatically to be just below
+   ln_bt_av      =    .true.           !  Time filtering of barotropic variables
+   ln_bt_nn_auto =    .true.           !  Set nn_baro automatically to be just below
                                        !  a user defined maximum courant number (rn_bt_cmax)
    nn_baro       =    30               !LOLO/30  Number of iterations of barotropic mode
                                        !  during rn_rdt seconds. Only used if ln_bt_nn_auto=F
@@ -100,7 +93,7 @@
    nn_bt_flt     =    2                !  Time filter choice !lolo: follow Chanut and Jouano/...
                                        !  = 0 None
                                        !  = 1 Boxcar over   nn_baro barotropic steps
-                                       !  = 2 Boxcar over 2*nn_baro     "        
+                                       !  = 2 Boxcar over 2*nn_baro     "        "
 /
 !-----------------------------------------------------------------------
 &namcrs        !   Grid coarsening for dynamics output and/or
@@ -110,8 +103,8 @@
 !-----------------------------------------------------------------------
 &namtsd    !   data : Temperature  & Salinity
 !-----------------------------------------------------------------------
-   sn_tem = 'votemper_GLORYS12V1-eNATL60_2008.nc', -12     ,'votemper',   .true.    , .true. , 'yearly'  ,    ''    ,    ''    ,    ''
-   sn_sal = 'vosaline_GLORYS12V1-eNATL60_2008.nc', -12     ,'vosaline',   .true.    , .true. ,'yearly'  ,    ''    ,    ''    ,    ''
+   sn_tem  = 'votemper_GLORYS12V1-eNATL60_2008.nc', -12     ,'votemper',   .true.    , .true. , 'yearly'  ,    ''    ,    ''    ,    ''
+   sn_sal  = 'vosaline_GLORYS12V1-eNATL60_2008.nc', -12     ,'vosaline',   .true.    , .true. ,'yearly'  ,    ''    ,    ''    ,    ''
    !
    ln_tsd_init   = .true.  ! lolo: must be controled by script! Initialisation of ocean T & S with T &S input data (T) or not (F)
    ln_tsd_tradmp = .false.  !  damping of ocean T & S toward T & S input data (T) or not (F)
@@ -162,9 +155,6 @@
 !              !                      !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_rnf      = 'runoff_3.1.3.nc'    ,-1                 ,'sorunoff' ,.true.        , .true. , 'yearly'  , ''       , ''       , ''
    sn_cnf      = 'runoff_3.1.3.nc'    , 0                 ,'socoefr'  , .false.      , .true. , 'yearly'  , ''       , ''       , ''
-   sn_s_rnf    = 'runoffs'            ,        24         , 'rosaline',   .true.     , .true. , 'yearly'  , ''       , ''       , ''
-   sn_t_rnf    = 'runoffs'            ,        24         , 'rotemper',   .true.     , .true. , 'yearly'  , ''       , ''       , ''
-   sn_dep_rnf  = 'runoffs'            ,         0         , 'rodepth' ,   .false.    , .true. , 'yearly'  , ''       , ''       , ''
 !
    ln_rnf_mouth = .false.    !  specific treatment at rivers mouths
    ln_rnf_depth = .false.    !  read in depth information for runoff
@@ -182,18 +172,12 @@
 !              !              !  (if <0  months)  !   name     !    (logical)   !  (T/F)  ! 'monthly' ! filename ! pairing  !
    sn_sss      = 'sss_WOA2013-1440x720-eNATL60_mean_2005-2012.nc',-1,  'sss'   ,    .true.   , .true. , 'yearly'  ,    ''    ,    ''    ,     ''
    nn_sssr     =     2     !  add a damping     term in the surface freshwater flux (=2)
+   rn_deds     =  -50.     !#LOLO?  magnitude of the damping on salinity   [mm/day]
+   rn_sssr_bnd =   4.e0    !#LOLO?  ABS(Max/Min) value of the damping erp term [mm/day]
 /
 !-----------------------------------------------------------------------
 &namsbc_alb    !   albedo parameters
 !-----------------------------------------------------------------------
-   nn_ice_alb   =    1   !  parameterization of ice/snow albedo
-                         !     0: Shine & Henderson-Sellers (JGR 1985), giving clear-sky albedo
-                         !     1: "home made" based on Brandt et al. (JClim 2005) and Grenfell & Perovich (JGR 2004),
-                         !        giving cloud-sky albedo
-   rn_alb_sdry  =  0.85  !  dry snow albedo         : 0.80 (nn_ice_alb = 0); 0.85 (nn_ice_alb = 1); obs 0.85-0.87 (cloud-sky)
-   rn_alb_smlt  =  0.75  !  melting snow albedo     : 0.65 ( '' )          ; 0.75 ( '' )          ; obs 0.72-0.82 ( '' )
-   rn_alb_idry  =  0.60  !  dry ice albedo          : 0.72 ( '' )          ; 0.60 ( '' )          ; obs 0.54-0.65 ( '' )
-   rn_alb_imlt  =  0.50  !  bare puddled ice albedo : 0.53 ( '' )          ; 0.50 ( '' )          ; obs 0.49-0.58 ( '' )
 /
 !-----------------------------------------------------------------------
 &namberg       !   iceberg parameters
@@ -203,7 +187,7 @@
 !-----------------------------------------------------------------------
 &namlbc        !   lateral momentum boundary condition
 !-----------------------------------------------------------------------
-   rn_shlat    =    2.     !LOLO!  shlat = 0  !  0 < shlat < 2  !  shlat = 2  !  2 < shlat
+   rn_shlat    =    2.     !#LOLO! shlat = 0  !  0 < shlat < 2  !  shlat = 2  !  2 < shlat
                            !       free slip  !   partial slip  !   no slip   ! strong slip
    ln_vorlat   = .false.   !  consistency of vorticity boundary condition with analytical eqs.
 /
@@ -298,25 +282,7 @@
 !-----------------------------------------------------------------------
 &nambfr        !   bottom friction
 !-----------------------------------------------------------------------
-   nn_bfr      =    2      !LOLO?  type of bottom friction :   = 0 : free slip,  = 1 : linear friction
-                           !                              = 2 : nonlinear friction
-   rn_bfri1    =    4.e-4  !  bottom drag coefficient (linear case)
-   rn_bfri2    =    1.e-3  !  bottom drag coefficient (non linear case). Minimum coeft if ln_loglayer=T
-   rn_bfri2_max =   1.e-1  !  max. bottom drag coefficient (non linear case and ln_loglayer=T)
-   rn_bfeb2    =    2.5e-3 !  bottom turbulent kinetic energy background  (m2/s2)
-   rn_bfrz0    =    3.e-3  !  bottom roughness [m] if ln_loglayer=T
-   ln_bfr2d    = .false.   !  horizontal variation of the bottom friction coef (read a 2D mask file )
-   rn_bfrien   =    50.    !  local multiplying factor of bfr (ln_bfr2d=T)
-   rn_tfri1    =    4.e-4  !  top drag coefficient (linear case)
-   rn_tfri2    =    2.5e-3 !  top drag coefficient (non linear case). Minimum coeft if ln_loglayer=T
-   rn_tfri2_max =   1.e-1  !  max. top drag coefficient (non linear case and ln_loglayer=T)
-   rn_tfeb2    =    0.0    !  top turbulent kinetic energy background  (m2/s2)
-   rn_tfrz0    =    3.e-3  !  top roughness [m] if ln_loglayer=T
-   ln_tfr2d    = .false.   !  horizontal variation of the top friction coef (read a 2D mask file )
-   rn_tfrien   =    50.    !  local multiplying factor of tfr (ln_tfr2d=T)
-
-   ln_bfrimp   = .true.    !  implicit bottom friction (requires ln_zdfexp = .false. if true)
-   ln_loglayer = .false.   !  logarithmic formulation (non linear case)
+   nn_bfr      =    2      !#LOLO?  type of bottom friction :   = 0 : free slip,  = 1 : linear friction
 /
 !-----------------------------------------------------------------------
 &nambbc        !   bottom temperature boundary condition
@@ -324,8 +290,8 @@
    sn_qgh      ='geothermal_flux_Goutorbe',  -12.  , 'gh_flux'    ,   .false.     , .true. , 'yearly'  ,   ''     ,   ''     ,   ''
    !
    cn_dir      = './'      !  root directory for the location of the runoff files
-   ln_trabbc   = .false.   !LOLO:  Apply a geothermal heating at the ocean bottom
-   nn_geoflx   =    0      !LOLO:  geothermal heat flux: = 0 no flux
+   ln_trabbc   = .false.   !#LOLO:  Apply a geothermal heating at the ocean bottom
+   nn_geoflx   =    0      !#LOLO:  geothermal heat flux: = 0 no flux
                            !     = 1 constant flux
                            !     = 2 variable flux (read in geothermal_heating.nc in mW/m2)
 /
@@ -416,12 +382,7 @@
    !                       !  Coefficient
    rn_ahm_0_lap     =     0.    !  horizontal laplacian eddy viscosity   [m2/s]
    rn_ahmb_0        =     0.    !  background eddy viscosity for ldf_iso [m2/s]
-   rn_ahm_0_blp     =  -3.3e7   !  horizontal bilaplacian eddy viscosity [m4/s] 
-   rn_cmsmag_1      =     3.    !  constant in laplacian Smagorinsky viscosity
-   rn_cmsmag_2      =     3     !  constant in bilaplacian Smagorinsky viscosity
-   rn_cmsh          =     1.    !  1 or 0 , if 0 -use only shear for Smagorinsky viscosity
-   rn_ahm_m_blp     =    -1.e12 !  upper limit for bilap  abs(ahm) < min( dx^4/128rdt, rn_ahm_m_blp)
-   rn_ahm_m_lap     = 40000.    !  upper limit for lap  ahm < min(dx^2/16rdt, rn_ahm_m_lap)
+   rn_ahm_0_blp     =     0.    !  horizontal bilaplacian eddy viscosity [m4/s]
 /
 !-----------------------------------------------------------------------
 &namzdf        !   vertical physics
@@ -432,7 +393,7 @@
    nn_havtb    =    1      !  horizontal shape for avtb (=1) or not (=0)
    ln_zdfevd   = .true.    !  enhanced vertical diffusion (evd) (T) or not (F)
    nn_evdm     =    0      !LOLO  evd apply on tracer (=0) or on tracer and momentum (=1)
-   rn_avevd    =  10.      !  evd mixing coefficient [m2/s]
+   rn_avevd    =  10.      !#LOLO?  evd mixing coefficient [m2/s]
    ln_zdfnpc   = .false.   !  Non-Penetrative Convective algorithm (T) or not (F)
    nn_npc      =    1            !  frequency of application of npc
    nn_npcp     =  365            !  npc control print frequency
@@ -444,20 +405,8 @@
 !-----------------------------------------------------------------------
    rn_ediff    =   0.1     !  coef. for vertical eddy coef. (avt=rn_ediff*mxl*sqrt(e) )
    rn_ediss    =   0.7     !  coef. of the Kolmogoroff dissipation
-   rn_ebb      =   60.     !  coef. of the surface input of tke (67.83 now usual value)
-   rn_emin     =   1.e-6   !  minimum value of tke [m2/s2]
-   rn_emin0    =   1.e-4   !  surface minimum value of tke [m2/s2]
-   rn_bshear   =   1.e-20  !  background shear (>0)
-!!!   nn_mxl      =   3       !LOLO: floating invalid!!!
-   nn_mxl      =   2  !LOLO! mixing length: = 0 bounded by the distance to surface and bottom
-                           !                 = 1 bounded by the local vertical scale factor
-                           !                 = 2 first vertical derivative of mixing length bounded by 1
-                           !                 = 3 as =2 with distinct disspipative an mixing length scale
-   nn_pdl      =   1       !  Prandtl number function of richarson number (=1, avt=pdl(Ri)*avm) or not (=0, avt=avm)
-   ln_mxl0     = .true.    !  surface mixing length scale = F(wind stress) (T) or not (F)
+   rn_ebb      =  60.      !#LOLO  coef. of the surface input of tke (=67.83 suggested when ln_mxl0=T)
    rn_mxl0     =   0.01    !  surface  buoyancy lenght scale minimum value (0.04)
-   ln_lc       = .true.    !  Langmuir cell parameterisation (Axell 2002)
-   rn_lc       =   0.15    !  coef. associated to Langmuir cells
    nn_etau     =   1       !LOLO?  penetration of tke below the mixed layer (ML) due to internal & intertial waves
                            !        = 0 no penetration
                            !        = 1 add a tke source below the ML
@@ -481,22 +430,15 @@
 !-----------------------------------------------------------------------
 &namsol        !   elliptic solver / island / free surface
 !-----------------------------------------------------------------------
-   nn_solv     =      1    !  elliptic solver: =1 preconditioned conjugate gradient (pcg)
-                           !                   =2 successive-over-relaxation (sor)
-   nn_sol_arp  =      0    !  absolute/relative (0/1) precision convergence test
-   rn_eps      =  1.e-6    !  absolute precision of the solver
-   nn_nmin     =    300    !  minimum of iterations for the SOR solver
-   nn_nmax     =   2800    !  maximum of iterations for the SOR solver
-   nn_nmod     =     10    !  frequency of test for the SOR solver
-   rn_resmax   =  1.e-10   !  absolute precision for the SOR solver
-   rn_sor      =  1.973    !  optimal coefficient for SOR solver (to be adjusted with the domain)
+   nn_nmax     =   2800    !LOLO?  maximum of iterations for the SOR solver
+   rn_sor      =  1.973    !LOLO?  optimal coefficient for SOR solver (to be adjusted with the domain)
 /
 !-----------------------------------------------------------------------
 &nammpp        !   Massively Parallel Processing                        ("key_mpp_mpi)
 !-----------------------------------------------------------------------
-jpni        =   204  !  jpni   number of processors following i (set automatically if < 1)
-jpnj        =   146  !  jpnj   number of processors following j (set automatically if < 1)
-jpnij       =   15839 !  jpnij  number of local domains (set automatically if < 1)
+jpni        =   311  !  jpni   number of processors following i (set automatically if < 1)
+jpnj        =   110  !  jpnj   number of processors following j (set automatically if < 1)
+jpnij       =   18095 !  jpnij  number of local domains (set automatically if < 1)
 /
 !-----------------------------------------------------------------------
 &namctl        !   Control prints & Benchmark
