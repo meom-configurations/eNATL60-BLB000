@@ -6,7 +6,7 @@
 &namrun        !   parameters of the run
 !-----------------------------------------------------------------------
    nn_no       =       0   !  job number (no more used...)
-   cn_exp      =  'eNATL60-N60SCAL'
+   cn_exp      =  'eNATL60-BLB000'
    nn_it000    =    1   !  first time step
    nn_itend    =    60   !  last  time step (std 5475)
    nn_date0    =    20080101   !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
@@ -21,8 +21,6 @@
    nn_istate   =    0    !  output the initial state (1) or not (0)
 !   nn_stock    =   1440   ! lolo: 1d at dt=60s  frequency of creation of a restart file (modulo referenced to 1)
 !   nn_write    =   1440   ! lolo: 1d at dt=60s  frequency of write in the output file   (modulo referenced to nn_it000)
-!   nn_stock    =   180   ! lolo: 3h at dt=60s  frequency of creation of a restart file (modulo referenced to 1)
-!   nn_write    =   180   ! lolo: 3h at dt=60s  frequency of write in the output file   (modulo referenced to nn_it000)
    nn_stock    =   60   ! lolo: 1h at dt=60s  frequency of creation of a restart file (modulo referenced to 1)
    nn_write    =   60   ! lolo: 1h at dt=60s  frequency of write in the output file   (modulo referenced to nn_it000)
    ln_dimgnnn  = .false.   !  DIMG file format: 1 file for all processors (F) or by processor (T)
@@ -496,9 +494,9 @@
 !-----------------------------------------------------------------------
 &nammpp        !   Massively Parallel Processing                        ("key_mpp_mpi)
 !-----------------------------------------------------------------------
-jpni        =   236  !  jpni   number of processors following i (set automatically if < 1)
-jpnj        =   120  !  jpnj   number of processors following j (set automatically if < 1)
-jpnij       =   15087 !  jpnij  number of local domains (set automatically if < 1)
+jpni        =   204  !  jpni   number of processors following i (set automatically if < 1)
+jpnj        =   146  !  jpnj   number of processors following j (set automatically if < 1)
+jpnij       =   15839 !  jpnij  number of local domains (set automatically if < 1)
 /
 !-----------------------------------------------------------------------
 &namctl        !   Control prints & Benchmark
