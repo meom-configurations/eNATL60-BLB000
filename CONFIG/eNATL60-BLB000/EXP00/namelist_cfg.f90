@@ -214,7 +214,7 @@
    cn_tra        =  'frs','frs'        !
    nn_tra_dta    =  1,1                !  = 0, bdy data are equal to the initial state
    !                                   !  = 1, bdy data are read in 'bdydata   .nc' files
-   cn_ice_lim    =  'none','none'
+   cn_ice_lim    =  'none','none'      ! #LOLO! => IN PROGRESS !
    nn_ice_lim_dta=  0,0                !  = 0, bdy data are equal to the initial state
    !                                   !  = 1, bdy data are read in 'bdydata   .nc' files
    rn_ice_tem    = 270.,270.           !  lim3 only: arbitrary temperature of incoming sea ice
