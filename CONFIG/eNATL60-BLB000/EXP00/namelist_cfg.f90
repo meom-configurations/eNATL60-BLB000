@@ -1,6 +1,24 @@
 !!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-!! NEMO/OPA  Configuration namelist : used to overwrite defaults values defined in SHARED/namelist_ref
+!! NEMO/OPA  :  1 - run manager      (namrun)
+!! namelists    2 - Domain           (namcfg, namzgr, namzgr_sco, namdom, namtsd)
+!!              3 - Surface boundary (namsbc, namsbc_ana, namsbc_flx, namsbc_clio, namsbc_core, namsbc_sas
+!!                                    namsbc_cpl, namtra_qsr, namsbc_rnf,
+!!                                    namsbc_apr, namsbc_ssr, namsbc_alb)
+!!              4 - lateral boundary (namlbc, namcla, namagrif, nambdy, nambdy_tide)
+!!              5 - bottom  boundary (nambfr, nambbc, nambbl)
+!!              6 - Tracer           (nameos, namtra_adv, namtra_ldf, namtra_dmp)
+!!              7 - dynamics         (namdyn_adv, namdyn_vor, namdyn_hpg, namdyn_spg, namdyn_ldf)
+!!              8 - Verical physics  (namzdf, namzdf_ric, namzdf_tke, namzdf_kpp, namzdf_ddm, namzdf_tmx, namzdf_tmx_new)
+!!              9 - diagnostics      (namnc4, namtrd, namspr, namflo, namhsb, namsto)
+!!             10 - miscellaneous    (namsol, nammpp, namctl)
+!!             11 - Obs & Assim      (namobs, nam_asminc)
 !!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+!!======================================================================
+!!                   ***  Run management namelists  ***
+!!======================================================================
+!!   namrun       parameters of the run
+!!======================================================================
 !
 !-----------------------------------------------------------------------
 &namrun        !   parameters of the run
@@ -28,6 +46,17 @@
    ln_clobber  = .false.   !  clobber (overwrite) an existing file
    nn_chunksz  =       0   !  chunksize (bytes) for NetCDF file (works only with iom_nf90 routines)
 /
+!
+!!======================================================================
+!!                      ***  Domain namelists  ***
+!!======================================================================
+!!   namcfg       parameters of the configuration
+!!   namzgr       vertical coordinate
+!!   namzgr_sco   s-coordinate or hybrid z-s-coordinate
+!!   namdom       space and time domain (bathymetry, mesh, timestep)
+!!   namtsd       data: temperature & salinity
+!!======================================================================
+!
 !-----------------------------------------------------------------------
 &namcfg     !   parameters of the configuration
 !-----------------------------------------------------------------------
@@ -56,7 +85,7 @@
 !-----------------------------------------------------------------------
    nn_closea   =    0      !  remove (=0) or keep (=1) closed seas and lakes (ORCA)
    nn_msh      =    0      !  create (=1) a mesh file or not (=0)
-   rn_hmin     =   -3      ! #LOLO!  min depth of the ocean (>0) or min number of ocean level (<0)
+   rn_hmin     =   -3.     ! #LOLO!  min depth of the ocean (>0) or min number of ocean level (<0)
    rn_e3zps_min=   25.     !  partial step thickness is set larger than the minimum of
    rn_e3zps_rat=    0.2    !  rn_e3zps_min and rn_e3zps_rat*e3t, with 0<rn_e3zps_rat<1
                            !
@@ -103,31 +132,58 @@
 !-----------------------------------------------------------------------
 &namtsd    !   data : Temperature  & Salinity
 !-----------------------------------------------------------------------
+!-----------------------------------------------------------------------
+!          !  file name                            ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!          !                                       !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_tem  = 'votemper_GLORYS12V1-eNATL60_2008.nc', -12     ,'votemper',   .true.    , .true. , 'yearly'  ,    ''    ,    ''    ,    ''
    sn_sal  = 'vosaline_GLORYS12V1-eNATL60_2008.nc', -12     ,'vosaline',   .true.    , .true. ,'yearly'  ,    ''    ,    ''    ,    ''
    !
-   ln_tsd_init   = .true.  ! Initialisation of ocean T & S with T &S input data (T) or not (F)
+   ln_tsd_init   = .true.   !  Initialisation of ocean T & S with T & S input data (T) or not (F)
    ln_tsd_tradmp = .false.  !  damping of ocean T & S toward T & S input data (T) or not (F)
 /
+!!======================================================================
+!!            ***  Surface Boundary Condition namelists  ***
+!!======================================================================
+!!   namsbc          surface boundary condition
+!!   namsbc_ana      analytical         formulation
+!!   namsbc_flx      flux               formulation
+!!   namsbc_clio     CLIO bulk formulae formulation
+!!   namsbc_core     CORE bulk formulae formulation
+!!   namsbc_mfs      MFS  bulk formulae formulation
+!!   namsbc_cpl      CouPLed            formulation                     ("key_oasis3")
+!!   namsbc_sas      StAndalone Surface module
+!!   namtra_qsr      penetrative solar radiation
+!!   namsbc_rnf      river runoffs
+!!   namsbc_isf      ice shelf melting/freezing
+!!   namsbc_apr      Atmospheric Pressure
+!!   namsbc_ssr      sea surface restoring term (for T and/or S)
+!!   namsbc_alb      albedo parameters
+!!======================================================================
+!
 !-----------------------------------------------------------------------
 &namsbc        !   Surface Boundary Condition (surface module)
 !-----------------------------------------------------------------------
    nn_fsbc     = 2         ! #LOLO!  frequency of surface boundary condition computation
+   nn_ice_embd = 1         !  =0 levitating ice (no mass exchange, concentration/dilution effect)
+                           !  =1 levitating ice with mass and salt exchange but no presure effect
+                           !  =2 embedded sea-ice (full salt and mass exchanges and pressure)
+   ln_dm2dc    = .true.    ! #LOLO!  daily mean to diurnal cycle on short wave
+   ln_rnf      = .true.    !  runoffs                                   (T   => fill namsbc_rnf)
    nn_isf      = 0         !  ice shelf melting/freezing                (/=0 => fill namsbc_isf)
-                           !  3 = rnf file for isf
-   nn_ice_embd = 1         ! embedded sea-ice (full salt and mass exchanges and pressure)
-   ln_dm2dc    = .true.    !  Daily mean to diurnal cycle on short wave
+                           !  0 =no isf                  1 = presence of ISF
+                           !  2 = bg03 parametrisation   3 = rnf file for isf
+                           !  4 = ISF fwf specified
+                           !  option 1 and 4 need ln_isfcav = .true. (domzgr)
    ln_ssr      = .true.    !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
    nn_fwb      = 2         ! #LOLO! FreshWater Budget: =0 unchecked
                            !     =1 global mean of e-p-r set to zero at each time step
                            !     =2 annual global mean of e-p-r set to zero
-   ln_rnf      = .true.    !  runoffs                                   (T   => fill namsbc_rnf)
 /
 !-----------------------------------------------------------------------
 &namsbc_core   !   namsbc_core  CORE bulk formulae
 !-----------------------------------------------------------------------
-!              !   file name  ! frequency (hours) ! variable   ! time interpol. !  clim   ! 'yearly'/ ! weights              ! rotation !
-!              !              !  (if <0  months)  !   name     !    (logical)   !  (T/F)  ! 'monthly' ! filename             ! pairing  !
+!              !  file name                    ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights                               ! rotation ! land/sea mask !
+!              !                               !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename                              ! pairing  ! filename      !
    sn_wndi     = 'drowned_u10_DFS5.2'          ,         3         , 'u10'     ,   .false.  , .false., 'yearly'  , 'weight_bicubic_512x256-eNATL60.nc' , 'Uwnd'   , ''
    sn_wndj     = 'drowned_v10_DFS5.2'          ,         3         , 'v10'     ,   .false.  , .false., 'yearly'  , 'weight_bicubic_512x256-eNATL60.nc' , 'Vwnd'   , ''
    sn_qsr      = 'drowned_radsw_DFS5.2'        ,        24         , 'radsw'   ,   .false.  , .false., 'yearly'  , 'weight_bilinear_512x256-eNATL60.nc' , ''       , ''
@@ -158,7 +214,7 @@
    sn_rnf      = 'runoff_3.1.3.nc'    ,-1                 ,'sorunoff' ,.true.        , .true. , 'yearly'  , ''       , ''       , ''
    sn_cnf      = 'runoff_3.1.3.nc'    , 0                 ,'socoefr'  , .false.      , .true. , 'yearly'  , ''       , ''       , ''
 !
-   ln_rnf_mouth = .false.    !  specific treatment at rivers mouths
+   ln_rnf_mouth = .false.   ! #LOLO?  specific treatment at rivers mouths
    ln_rnf_depth = .false.    !  read in depth information for runoff
    ln_rnf_tem   = .false.    !  read in temperature information for runoff
    ln_rnf_sal   = .false.    !  read in salinity information for runoff
@@ -170,8 +226,8 @@
 !-----------------------------------------------------------------------
 &namsbc_ssr    !   surface boundary condition : sea surface restoring
 !-----------------------------------------------------------------------
-!              !   file name  ! frequency (hours) ! variable   ! time interpol. !  clim   ! 'yearly'/ ! weights  ! rotation !
-!              !              !  (if <0  months)  !   name     !    (logical)   !  (T/F)  ! 'monthly' ! filename ! pairing  !
+!              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_sss      = 'sss_WOA2013-1440x720-eNATL60_mean_2005-2012.nc',-1,  'sss'   ,    .true.   , .true. , 'yearly'  ,    ''    ,    ''    ,     ''
    nn_sssr     =     2     !  add a damping     term in the surface freshwater flux (=2)
    rn_deds     =  -100.    ! #LOLO?  magnitude of the damping on salinity   [mm/day]
@@ -196,6 +252,7 @@
 !-----------------------------------------------------------------------
 &namcla        !   cross land advection
 !-----------------------------------------------------------------------
+   nn_cla      =    0      !  advection between 2 ocean pts separates by land
 /
 !-----------------------------------------------------------------------
 &nambdy        !  unstructured open boundaries                          ("key_bdy")
@@ -252,8 +309,8 @@
 !-----------------------------------------------------------------------
 &nambdy_dta      !  open boundaries SOUTH - external data
 !-----------------------------------------------------------------------
-!              !   file name    ! frequency (hours) !  variable  ! time interpol. !  clim   ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
-!              !                !  (if <0  months)  !    name    !    (logical)   !  (T/F)  ! 'monthly' ! filename ! pairing  ! filename      !
+!              !  file name      ! frequency (hours) ! variable   ! time interp.   !  clim   ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !                 !  (if <0  months)  !   name     !   (logical)    !  (T/F ) ! 'monthly' ! filename ! pairing  ! filename      !
    bn_ssh      = 'sossheig_GLORYS12V1-BDY_t_S_eNATL60_3.6',24, 'sossheig',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
    bn_u2d      = 'boo.nc'        ,         24        , 'vobtcrtx',    .true.   , .false.,  'daily'  ,    ''            ,   ''     ,     ''
    bn_v2d      = 'boo.nc'        ,         24        , 'vobtcrty',    .true.   , .false.,  'daily'  ,    ''            ,   ''     ,     ''
@@ -268,8 +325,8 @@
 !!-----------------------------------------------------------------------
 &nambdy_dta    !  open boundaries NORTH - external data                       
 !-----------------------------------------------------------------------
-!              !  file name      ! frequency (hours) ! variable  ! time interp.!  clim   ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
-!              !                 !  (if <0  months)  !   name    !  (logical)  !  (T/F ) ! 'monthly' ! filename ! pairing  ! filename      !
+!              !  file name      ! frequency (hours) ! variable   ! time interp.   !  clim   ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !                 !  (if <0  months)  !   name     !   (logical)    !  (T/F ) ! 'monthly' ! filename ! pairing  ! filename      !
    bn_ssh      = 'sossheig_GLORYS12V1-BDY_t_N_eNATL60_3.6',24, 'sossheig',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
    bn_u2d      = 'boo.nc'        ,         24        , 'vobtcrtx',    .true.   , .false.,  'daily'  ,    ''            ,   ''     ,     ''
    bn_v2d      = 'boo.nc'        ,         24        , 'vobtcrty',    .true.   , .false.,  'daily'  ,    ''            ,   ''     ,     ''
@@ -280,6 +337,13 @@
    cn_dir  =    './BDY/'
    ln_full_vel = .true.
 /
+!!======================================================================
+!!                 ***  Bottom boundary condition  ***
+!!======================================================================
+!!   nambfr        bottom friction
+!!   nambbc        bottom temperature boundary condition
+!!   nambbl        bottom boundary layer scheme                         ("key_trabbl")
+!!======================================================================
 !
 !-----------------------------------------------------------------------
 &nambfr        !   bottom friction
@@ -289,6 +353,9 @@
 !-----------------------------------------------------------------------
 &nambbc        !   bottom temperature boundary condition
 !-----------------------------------------------------------------------
+!              !                              !  (if <0  months)  !  
+!              !  file name      ! frequency (hours) ! variable   ! time interp.   !  clim   ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !                 !  (if <0  months)  !   name     !   (logical)    !  (T/F ) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_qgh      ='geothermal_flux_Goutorbe',  -12.  , 'gh_flux'    ,   .false.     , .true. , 'yearly'  ,   ''     ,   ''     ,   ''
    !
    cn_dir      = './'      !  root directory for the location of the runoff files
@@ -296,11 +363,23 @@
    nn_geoflx   =    0      !    geothermal heat flux: = 0 no flux
                            !     = 1 constant flux
                            !     = 2 variable flux (read in geothermal_heating.nc in mW/m2)
+   rn_geoflx_cst = 86.4e-3 !  Constant value of geothermal heat flux [W/m2]
 /
 !-----------------------------------------------------------------------
 &nambbl        !   bottom boundary layer scheme
 !-----------------------------------------------------------------------
 /
+
+!!======================================================================
+!!                        Tracer (T & S ) namelists
+!!======================================================================
+!!   nameos        equation of state
+!!   namtra_adv    advection scheme
+!!   namtra_adv_mle   mixed layer eddy param. (Fox-Kemper param.)
+!!   namtra_ldf    lateral diffusion scheme
+!!   namtra_dmp    T & S newtonian damping
+!!======================================================================
+!
 !-----------------------------------------------------------------------
 &nameos        !   ocean physical parameters
 !-----------------------------------------------------------------------
@@ -312,7 +391,7 @@
    ln_traadv_ubs    =  .true.   ! #LOLO!  UBS scheme
 /
 !-----------------------------------------------------------------------
-&namtra_adv_mle !  mixed layer eddy parametrisation (Fox-Kemper param)
+&namtra_adv_mle !   mixed layer eddy parametrisation (Fox-Kemper param)
 !-----------------------------------------------------------------------
   ln_mle    = .false.      ! #LOLO! (T) use the Mixed Layer Eddy (MLE) parameterisation
 /
@@ -372,6 +451,13 @@
    ln_hpg_sco  = .true.    ! lolo: IF VVL!!!  s-coordinate (standard jacobian formulation)
 /
 !-----------------------------------------------------------------------
+!namdyn_spg    !   surface pressure gradient   (CPP key only)
+!-----------------------------------------------------------------------
+!                          !  explicit free surface                     ("key_dynspg_exp")
+!                          !  filtered free surface                     ("key_dynspg_flt")
+!                          !  split-explicit free surface               ("key_dynspg_ts")
+
+!-----------------------------------------------------------------------
 &namdyn_ldf    !   lateral diffusion on momentum
 !-----------------------------------------------------------------------
    !                       !  Type of the operator :
@@ -386,6 +472,19 @@
    rn_ahmb_0        =     0.    !  background eddy viscosity for ldf_iso [m2/s]
    rn_ahm_0_blp     =     0.    !  horizontal bilaplacian eddy viscosity [m4/s]
 /
+
+!!======================================================================
+!!             Tracers & Dynamics vertical physics namelists
+!!======================================================================
+!!    namzdf            vertical physics
+!!    namzdf_ric        richardson number dependent vertical mixing     ("key_zdfric")
+!!    namzdf_tke        TKE dependent vertical mixing                   ("key_zdftke")
+!!    namzdf_kpp        KPP dependent vertical mixing                   ("key_zdfkpp")
+!!    namzdf_ddm        double diffusive mixing parameterization        ("key_zdfddm")
+!!    namzdf_tmx        tidal mixing parameterization                   ("key_zdftmx")
+!!    namzdf_tmx_new    new tidal mixing parameterization               ("key_zdftmx_new")
+!!======================================================================
+!
 !-----------------------------------------------------------------------
 &namzdf        !   vertical physics
 !-----------------------------------------------------------------------
@@ -429,6 +528,18 @@
 &namzdf_tmx_new    !   new tidal mixing parameterization                ("key_zdftmx_new")
 !-----------------------------------------------------------------------
 /
+!!======================================================================
+!!                  ***  Miscellaneous namelists  ***
+!!======================================================================
+!!   namsol            elliptic solver / island / free surface
+!!   nammpp            Massively Parallel Processing                    ("key_mpp_mpi)
+!!   namctl            Control prints & Benchmark
+!!   namc1d            1D configuration options                         ("key_c1d")
+!!   namc1d_uvd        data: U & V currents                             ("key_c1d")
+!!   namc1d_dyndmp     U & V newtonian damping                          ("key_c1d")
+!!   namsto            Stochastic parametrization of EOS
+!!======================================================================
+!
 !-----------------------------------------------------------------------
 &namsol        !   elliptic solver / island / free surface
 !-----------------------------------------------------------------------
@@ -455,7 +566,7 @@ jpnij       =   18095 !  jpnij  number of local domains (set automatically if < 
 !-----------------------------------------------------------------------
 &namhsb       !  Heat and salt budgets
 !-----------------------------------------------------------------------
-   ln_diahsb  = .false.  
+   ln_diahsb  = .false.    !  check the heat and salt budgets (T) or not (F)
 /
 !-----------------------------------------------------------------------
 &namdyn_nept  !   Neptune effect (simplified: lateral and vertical diffusions removed)
