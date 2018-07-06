@@ -164,6 +164,7 @@
 &namsbc        !   Surface Boundary Condition (surface module)
 !-----------------------------------------------------------------------
    nn_fsbc     = 2         ! #LOLO!  frequency of surface boundary condition computation
+   ln_blk_core = .true.    !  CORE bulk formulation                     (T => fill namsbc_core)
    nn_ice_embd = 1         !  =0 levitating ice (no mass exchange, concentration/dilution effect)
                            !  =1 levitating ice with mass and salt exchange but no presure effect
                            !  =2 embedded sea-ice (full salt and mass exchanges and pressure)
@@ -259,7 +260,6 @@
 !-----------------------------------------------------------------------
    nb_bdy         = 2        !  number of open boundary sets
    ln_coords_file = .false.,.false.      !  =T : read bdy coordinates from file
-
    cn_dyn2d       = 'flather','flather'  ! #LOLO!
    nn_dyn2d_dta   = 1,1                  !  = 0, bdy data are equal to the initial state
       !                       !  = 1, bdy data are read in 'bdydata   .nc' files
@@ -393,7 +393,7 @@
 !-----------------------------------------------------------------------
 &namtra_adv_mle !   mixed layer eddy parametrisation (Fox-Kemper param)
 !-----------------------------------------------------------------------
-  ln_mle    = .false.      ! #LOLO! (T) use the Mixed Layer Eddy (MLE) parameterisation
+   ln_mle    = .false.      ! #LOLO! (T) use the Mixed Layer Eddy (MLE) parameterisation
 /
 !----------------------------------------------------------------------------------
 &namtra_ldf    !   lateral diffusion scheme for tracers
@@ -494,7 +494,7 @@
    nn_havtb    =    1      !  horizontal shape for avtb (=1) or not (=0)
    ln_zdfevd   = .true.    !  enhanced vertical diffusion (evd) (T) or not (F)
    nn_evdm     =    0      ! #LOLO?  evd apply on tracer (=0) or on tracer and momentum (=1)
-   rn_avevd    =  10.      !  evd mixing coefficient [m2/s]
+   rn_avevd    =  10.      ! #LOLO?   evd mixing coefficient [m2/s]
    ln_zdfnpc   = .false.   !  Non-Penetrative Convective algorithm (T) or not (F)
    nn_npc      =    1            !  frequency of application of npc
    nn_npcp     =  365            !  npc control print frequency

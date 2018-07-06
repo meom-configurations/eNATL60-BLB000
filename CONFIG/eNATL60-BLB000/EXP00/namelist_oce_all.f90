@@ -35,10 +35,10 @@
                            !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
                            !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
                            !    = 2 nn_date0 read in restart  ; nn_it000 : check consistancy between namelist and restart
-   cn_ocerst_in  = "restart_oce"   !  suffix of ocean restart name (input)
-   cn_ocerst_indir = "."       !  directory from which to read input ocean restarts
-   cn_ocerst_out = "restar_oce"   !  suffix of ocean restart name (output)
-   cn_ocerst_outdir = "."      !  directory in which to write output ocean restarts
+   cn_ocerst_in  = 'restart_oce'   !  suffix of ocean restart name (input)
+   cn_ocerst_indir = '.'       !  directory from which to read input ocean restarts
+   cn_ocerst_out = 'restart_oce'   !  suffix of ocean restart name (output)
+   cn_ocerst_outdir = '.'      !  directory in which to write output ocean restarts
    nn_istate   =       0   !  output the initial state (1) or not (0)
    ln_rst_list = .false.   !  output restarts at list of times using nn_stocklist (T) or at set frequency with nn_stock (F)
    nn_stock    =    1440   !  frequency of creation of a restart file (modulo referenced to 1)
@@ -64,8 +64,8 @@
 !-----------------------------------------------------------------------
 &namcfg     !   parameters of the configuration
 !-----------------------------------------------------------------------
-   cp_cfg      =  "enatl"            !  name of the configuration
-   cp_cfz      =  "no zoom"            !  name of the zoom of configuration
+   cp_cfg      =  'enatl'            !  name of the configuration
+   cp_cfz      =  'no zoom'            !  name of the zoom of configuration
    jp_cfg      =       60               !  resolution of the configuration
    jpidta      =     8354              !  1st lateral dimension ( >= jpi )
    jpjdta      =     4729              !  2nd    "         "    ( >= jpj )
