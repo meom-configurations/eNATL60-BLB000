@@ -64,15 +64,14 @@
 !-----------------------------------------------------------------------
 &namcfg     !   parameters of the configuration
 !-----------------------------------------------------------------------
-   cp_cfg      =  'enatl'            !  name of the configuration
+   cp_cfg      =  'enatl'              !  name of the configuration
    cp_cfz      =  'no zoom'            !  name of the zoom of configuration
-   jp_cfg      =       60               !  resolution of the configuration
+   jp_cfg      =       60              !  resolution of the configuration
    jpidta      =     8354              !  1st lateral dimension ( >= jpi )
    jpjdta      =     4729              !  2nd    "         "    ( >= jpj )
    jpkdta      =     300               !  number of levels      ( >= jpk )
    jpiglo      =     8354              !  1st dimension of global domain --> i =jpidta
    jpjglo      =     4729              !  2nd    -                  -    --> j =jpjdta
-
    jpizoom     =       1               !  left bottom (i,j) indices of the zoom
    jpjzoom     =       1               !  in data domain indices
    jperio      =       0               !  lateral cond. type (between 0 and 6)
@@ -422,7 +421,7 @@
    sn_dep_rnf  = 'runoffs'            ,         0         , 'rodepth' ,   .false.    , .true. , 'yearly'  , ''       , ''       , ''
 
    cn_dir       = './'      !  root directory for the location of the runoff files
-   ln_rnf_mouth = .false.   ! #LOLO?  specific treatment at rivers mouths
+   ln_rnf_mouth = .false.    ! #LOLO?  specific treatment at rivers mouths
    rn_hrnf      =  15.e0    !  depth over which enhanced vertical mixing is used
    rn_avt_rnf   =   1.e-3   !  value of the additional vertical mixing coef. [m2/s]
    rn_rfact     =   1.e0    !  multiplicative factor for runoff
@@ -597,8 +596,8 @@
    cn_tra        =  'frs','frs'        !
    nn_tra_dta    =  1,1                !  = 0, bdy data are equal to the initial state
    !                                   !  = 1, bdy data are read in 'bdydata   .nc' files
-   cn_ice_lim    =  'none','none'      ! #LOLO! => IN PROGRESS !
-   nn_ice_lim_dta=  0,0                !  = 0, bdy data are equal to the initial state
+   cn_ice_lim    =  'none','frs'       ! #LOLO!
+   nn_ice_lim_dta=  0,1                !  = 0, bdy data are equal to the initial state
    !                                   !  = 1, bdy data are read in 'bdydata   .nc' files
    rn_ice_tem    = 270.,270.           !  lim3 only: arbitrary temperature of incoming sea ice
    rn_ice_sal    = 10. ,10.            !  lim3 only:      --   salinity           --
@@ -660,6 +659,11 @@
    bn_v3d      = 'vomecrty_GLORYS12V1-BDY_v_N_eNATL60_3.6',24, 'vomecrty',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
    bn_tem      = 'votemper_GLORYS12V1-BDY_t_N_eNATL60_3.6',24, 'votemper',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
    bn_sal      = 'vosaline_GLORYS12V1-BDY_t_N_eNATL60_3.6',24, 'vosaline',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
+!
+   bn_a_i      = 'ileadfra_GLORYS2V4-BDY_t_N_eNATL60_3.6',-1, 'ileadfra',    .true.   , .false. , 'yearly'  ,    ''    ,   ''     , '' ! #LOLO: MONTHLY of GLORYS2V4 !!! (not daily GLORYS12 as above)
+   bn_ht_i     = 'iicethic_GLORYS2V4-BDY_t_N_eNATL60_3.6',-1, 'iicethic',    .true.   , .false. , 'yearly'  ,    ''    ,   ''     , '' ! #LOLO: MONTHLY of GLORYS2V4 !!! (not daily GLORYS12 as above)
+   bn_ht_s     = 'isnowthi_GLORYS2V4-BDY_t_N_eNATL60_3.6',-1, 'isnowthi',    .true.   , .false. , 'yearly'  ,    ''    ,   ''     , '' ! #LOLO: MONTHLY of GLORYS2V4 !!! (not daily GLORYS12 as above)
+! 
    cn_dir  =    './BDY/'
    ln_full_vel = .true.
 /

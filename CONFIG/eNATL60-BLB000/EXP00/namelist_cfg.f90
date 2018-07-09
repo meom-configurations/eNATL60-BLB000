@@ -30,15 +30,13 @@
    nn_date0    =    20080101   !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
    ln_rstart   = .false.   !  start from rest (F) or from a restart file (T)
-   nn_rstctl   =  2   !  restart control => activated only if ln_rstart = T
+   nn_rstctl   =       2   !  restart control ==> activated only if ln_rstart=T
                            !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
                            !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
                            !    = 2 nn_date0 read in restart  ; nn_it000 : check consistancy between namelist and restart
    cn_ocerst_in  = 'restart_oce'
    cn_ocerst_out = 'restart_oce'
    nn_istate   =    0    !  output the initial state (1) or not (0)
-!   nn_stock    =   1440   ! 1d at dt=60s  frequency of creation of a restart file (modulo referenced to 1)
-!   nn_write    =   1440   ! 1d at dt=60s  frequency of write in the output file   (modulo referenced to nn_it000)
    nn_stock    =   60   ! 1h at dt=60s  frequency of creation of a restart file (modulo referenced to 1)
    nn_write    =   60   ! 1h at dt=60s  frequency of write in the output file   (modulo referenced to nn_it000)
    ln_dimgnnn  = .false.   !  DIMG file format: 1 file for all processors (F) or by processor (T)
@@ -60,16 +58,16 @@
 !-----------------------------------------------------------------------
 &namcfg     !   parameters of the configuration
 !-----------------------------------------------------------------------
-   cp_cfg      =  'enatl'   !  name of the configuration
-   jp_cfg      =      60   !  resolution of the configuration
+   cp_cfg      =  'enatl'              !  name of the configuration
+   jp_cfg      =       60              !  resolution of the configuration
    jpidta      =     8354              !  1st lateral dimension ( >= jpi )
    jpjdta      =     4729              !  2nd    "         "    ( >= jpj )
    jpkdta      =     300               !  number of levels      ( >= jpk )
    jpiglo      =     8354              !  1st dimension of global domain --> i =jpidta
    jpjglo      =     4729              !  2nd    -                  -    --> j =jpjdta
-   jpizoom     =       1   !  left bottom (i,j) indices of the zoom
-   jpjzoom     =       1   !  in data domain indices
-   jperio      =       0   !  lateral cond. type (between 0 and 6)
+   jpizoom     =       1               !  left bottom (i,j) indices of the zoom
+   jpjzoom     =       1               !  in data domain indices
+   jperio      =       0               !  lateral cond. type (between 0 and 6)
 /
 !-----------------------------------------------------------------------
 &namzgr        !   vertical coordinate
@@ -90,7 +88,6 @@
    rn_e3zps_rat=    0.2    !  rn_e3zps_min and rn_e3zps_rat*e3t, with 0<rn_e3zps_rat<1
                            !
    rn_rdt      =   60.     !  time step for the dynamics (and tracer if nn_acc=0)
- 
    ppglam0     =  999999.d0            !  longitude of first raw and column T-point (jphgr_msh = 1)
    ppgphi0     =  999999.d0            ! latitude  of first raw and column T-point (jphgr_msh = 1)
    ppe1_deg    =  999999.d0            !  zonal      grid-spacing (degrees)
@@ -214,8 +211,7 @@
 !              !                      !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_rnf      = 'runoff_3.1.3.nc'    ,-1                 ,'sorunoff' ,.true.        , .true. , 'yearly'  , ''       , ''       , ''
    sn_cnf      = 'runoff_3.1.3.nc'    , 0                 ,'socoefr'  , .false.      , .true. , 'yearly'  , ''       , ''       , ''
-!
-   ln_rnf_mouth = .false.   ! #LOLO?  specific treatment at rivers mouths
+   ln_rnf_mouth = .false.    ! #LOLO?  specific treatment at rivers mouths
    ln_rnf_depth = .false.    !  read in depth information for runoff
    ln_rnf_tem   = .false.    !  read in temperature information for runoff
    ln_rnf_sal   = .false.    !  read in salinity information for runoff
@@ -271,8 +267,8 @@
    cn_tra        =  'frs','frs'        !
    nn_tra_dta    =  1,1                !  = 0, bdy data are equal to the initial state
    !                                   !  = 1, bdy data are read in 'bdydata   .nc' files
-   cn_ice_lim    =  'none','none'      ! #LOLO! => IN PROGRESS !
-   nn_ice_lim_dta=  0,0                !  = 0, bdy data are equal to the initial state
+   cn_ice_lim    =  'none','frs'       ! #LOLO!
+   nn_ice_lim_dta=  0,1                !  = 0, bdy data are equal to the initial state
    !                                   !  = 1, bdy data are read in 'bdydata   .nc' files
    rn_ice_tem    = 270.,270.           !  lim3 only: arbitrary temperature of incoming sea ice
    rn_ice_sal    = 10. ,10.            !  lim3 only:      --   salinity           --
@@ -334,6 +330,11 @@
    bn_v3d      = 'vomecrty_GLORYS12V1-BDY_v_N_eNATL60_3.6',24, 'vomecrty',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
    bn_tem      = 'votemper_GLORYS12V1-BDY_t_N_eNATL60_3.6',24, 'votemper',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
    bn_sal      = 'vosaline_GLORYS12V1-BDY_t_N_eNATL60_3.6',24, 'vosaline',    .true.   , .false.,  'yearly'  ,    ''            ,   ''     ,     ''
+!
+   bn_a_i      = 'ileadfra_GLORYS2V4-BDY_t_N_eNATL60_3.6',-1, 'ileadfra',    .true.   , .false. , 'yearly'  ,    ''    ,   ''     , '' ! #LOLO: MONTHLY of GLORYS2V4 !!! (not daily GLORYS12 as above)
+   bn_ht_i     = 'iicethic_GLORYS2V4-BDY_t_N_eNATL60_3.6',-1, 'iicethic',    .true.   , .false. , 'yearly'  ,    ''    ,   ''     , '' ! #LOLO: MONTHLY of GLORYS2V4 !!! (not daily GLORYS12 as above)
+   bn_ht_s     = 'isnowthi_GLORYS2V4-BDY_t_N_eNATL60_3.6',-1, 'isnowthi',    .true.   , .false. , 'yearly'  ,    ''    ,   ''     , '' ! #LOLO: MONTHLY of GLORYS2V4 !!! (not daily GLORYS12 as above)
+! 
    cn_dir  =    './BDY/'
    ln_full_vel = .true.
 /
@@ -549,9 +550,9 @@
 !-----------------------------------------------------------------------
 &nammpp        !   Massively Parallel Processing                        ("key_mpp_mpi)
 !-----------------------------------------------------------------------
-jpni        =   311  !  jpni   number of processors following i (set automatically if < 1)
-jpnj        =   110  !  jpnj   number of processors following j (set automatically if < 1)
-jpnij       =   18095 !  jpnij  number of local domains (set automatically if < 1)
+   jpni        =   311     !  jpni   number of processors following i (set automatically if < 1)
+   jpnj        =   110     !  jpnj   number of processors following j (set automatically if < 1)
+   jpnij       =   18095   !  jpnij  number of local domains (set automatically if < 1)
 /
 !-----------------------------------------------------------------------
 &namctl        !   Control prints & Benchmark
