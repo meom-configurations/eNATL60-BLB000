@@ -35,13 +35,14 @@
                            !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
                            !    = 2 nn_date0 read in restart  ; nn_it000 : check consistancy between namelist and restart
    cn_ocerst_in  = 'restart_oce'
+   cn_ocerst_indir = './rstrt_in'   !  directory from which to read input ocean restarts
    cn_ocerst_out = 'restart_oce'
    nn_istate   =    0    !  output the initial state (1) or not (0)
    nn_stock    =   60   ! 1h at dt=60s  frequency of creation of a restart file (modulo referenced to 1)
    nn_write    =   60   ! 1h at dt=60s  frequency of write in the output file   (modulo referenced to nn_it000)
    ln_dimgnnn  = .false.   !  DIMG file format: 1 file for all processors (F) or by processor (T)
    ln_mskland  = .false.   !  mask land points in NetCDF outputs (costly: + ~15%)
-   ln_clobber  = .false.   !  clobber (overwrite) an existing file
+   ln_clobber  = .true.    ! #LOLO!  clobber (overwrite) an existing file
    nn_chunksz  =       0   !  chunksize (bytes) for NetCDF file (works only with iom_nf90 routines)
 /
 !
@@ -162,10 +163,11 @@
 !-----------------------------------------------------------------------
    nn_fsbc     = 2         ! #LOLO!  frequency of surface boundary condition computation
    ln_blk_core = .true.    !  CORE bulk formulation                     (T => fill namsbc_core)
+   ln_apr_dyn  = .false.   ! #LOLO?  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
    nn_ice_embd = 1         !  =0 levitating ice (no mass exchange, concentration/dilution effect)
                            !  =1 levitating ice with mass and salt exchange but no presure effect
                            !  =2 embedded sea-ice (full salt and mass exchanges and pressure)
-   ln_dm2dc    = .true.    ! #LOLO!  daily mean to diurnal cycle on short wave
+   ln_dm2dc    = .true.    !  daily mean to diurnal cycle on short wave
    ln_rnf      = .true.    !  runoffs                                   (T   => fill namsbc_rnf)
    nn_isf      = 0         !  ice shelf melting/freezing                (/=0 => fill namsbc_isf)
                            !  0 =no isf                  1 = presence of ISF
@@ -200,9 +202,10 @@
 !              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_chl      ='CHLA_ESACCI-OC-L3S-4km-eNATL60_y2010', -1    , 'CHLA'    ,   .true.     , .true. , 'yearly'  , ''       , ''       , ''
-   ln_traqsr   = .false.   ! #LOLO!  Light penetration (T) or not (F)
+   ln_traqsr   = .true.    !  Light penetration (T) or not (F)
    ln_qsr_rgb  = .true.    !  RGB (Red-Green-Blue) light penetration
    ln_qsr_2bd  = .false.   !  2 bands              light penetration
+   nn_chldta   =      0    ! #LOLO!  RGB : 2D Chl data (=1), 3D Chl data (=2) or cst value (=0)
 /
 !-----------------------------------------------------------------------
 &namsbc_rnf    !   runoffs namelist surface boundary condition
@@ -211,7 +214,9 @@
 !              !                      !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_rnf      = 'runoff_3.1.3.nc'    ,-1                 ,'sorunoff' ,.true.        , .true. , 'yearly'  , ''       , ''       , ''
    sn_cnf      = 'runoff_3.1.3.nc'    , 0                 ,'socoefr'  , .false.      , .true. , 'yearly'  , ''       , ''       , ''
-   ln_rnf_mouth = .false.    ! #LOLO?  specific treatment at rivers mouths
+   ln_rnf_mouth = .true.     ! #LOLO!  specific treatment at rivers mouths
+   rn_hrnf      =  15.e0     !  depth over which enhanced vertical mixing is used
+   rn_avt_rnf   =   2.e-3    ! #LOLO! value of the additional vertical mixing coef. [m2/s]
    ln_rnf_depth = .false.    !  read in depth information for runoff
    ln_rnf_tem   = .false.    !  read in temperature information for runoff
    ln_rnf_sal   = .false.    !  read in salinity information for runoff
@@ -221,13 +226,25 @@
    nn_rnf_depth_file = 0     ! create (=1) a runoff depth file or not (=0)
 /
 !-----------------------------------------------------------------------
+&namsbc_apr    !   Atmospheric pressure used as ocean forcing or in bulk
+!-----------------------------------------------------------------------
+!              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+   sn_apr      = 'patm'      ,         -1        ,'somslpre',    .true.     , .true. , 'yearly'  ,  ''      ,   ''     , ''
+
+   cn_dir      = './'       !  root directory for the location of the bulk files
+   rn_pref     = 101000.    !  reference atmospheric pressure   [N/m2]/
+   ln_ref_apr  = .false.    !  ref. pressure: global mean Patm (T) or a constant (F)
+   ln_apr_obc  = .false.    !  inverse barometer added to OBC ssh data
+/
+!-----------------------------------------------------------------------
 &namsbc_ssr    !   surface boundary condition : sea surface restoring
 !-----------------------------------------------------------------------
 !              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_sss      = 'sss_WOA2013-1440x720-eNATL60_mean_2005-2012.nc',-1,  'sss'   ,    .true.   , .true. , 'yearly'  ,    ''    ,    ''    ,     ''
    nn_sssr     =     2     !  add a damping     term in the surface freshwater flux (=2)
-   rn_deds     =  -100.    ! #LOLO?  magnitude of the damping on salinity   [mm/day]
+   rn_deds     =  -166.67  ! #LOLO?  magnitude of the damping on salinity   [mm/day]
    rn_sssr_bnd =   4.e0    ! #LOLO?  ABS(Max/Min) value of the damping erp term [mm/day]
 /
 !-----------------------------------------------------------------------
@@ -349,7 +366,9 @@
 !-----------------------------------------------------------------------
 &nambfr        !   bottom friction
 !-----------------------------------------------------------------------
-   nn_bfr      =    2      ! #LOLO?  type of bottom friction :   = 0 : free slip,  = 1 : linear friction
+   nn_bfr      =    2      !  type of bottom friction :   = 0 : free slip,  = 1 : linear friction
+                           !                              = 2 : nonlinear friction
+   ln_bfr2d    = .false.   !  #LOLO? horizontal variation of the bottom friction coef (read a 2D mask file )
 /
 !-----------------------------------------------------------------------
 &nambbc        !   bottom temperature boundary condition
@@ -369,6 +388,10 @@
 !-----------------------------------------------------------------------
 &nambbl        !   bottom boundary layer scheme
 !-----------------------------------------------------------------------
+   nn_bbl_ldf  =  1      ! #LOLO?  diffusive bbl (=1)   or not (=0)
+   nn_bbl_adv  =  0      !  advective bbl (=1/2) or not (=0)
+   rn_ahtbbl   =  10.    ! #LOLO?  lateral mixing coefficient in the bbl  [m2/s]
+   rn_gambbl   =  10.    !  advective bbl coefficient                 [s]
 /
 
 !!======================================================================
@@ -432,11 +455,12 @@
    nn_dynkeg     = 1        ! #LOLO? scheme for grad(KE): =0   C2  ;  =1   Hollingsworth correction
    ln_dynadv_cen2= .false.  !  flux form - 2nd order centered scheme
    ln_dynadv_ubs = .true.   ! #LOLO!  flux form - 3rd order UBS      scheme
-   ln_dynzad_zts = .false.  ! #LOLO? Use (T) sub timestepping for vertical momentum advection
+   ln_dynzad_zts = .false.  ! <#LOLO? [requires vector form!]> Use (T) sub timestepping for vertical momentum advection
 /
 !-----------------------------------------------------------------------
 &nam_vvl    !   vertical coordinate options
 !-----------------------------------------------------------------------
+   ln_vvl_zstar  = .true.           !  zstar vertical coordinate
 /
 !-----------------------------------------------------------------------
 &namdyn_vor    !   option of physics/algorithm (not control by CPP keys)
@@ -448,8 +472,8 @@
 &namdyn_hpg    !   Hydrostatic pressure gradient option
 !-----------------------------------------------------------------------
    ln_hpg_zco  = .false.   !  z-coordinate - full steps  
-   ln_hpg_zps  = .false.   ! lolo: IF NO VVL!  z-coordinate - partial steps (interpolation)
-   ln_hpg_sco  = .true.    ! lolo: IF VVL!!!  s-coordinate (standard jacobian formulation)
+   ln_hpg_zps  = .false.   !  z-coordinate - partial steps (interpolation)
+   ln_hpg_sco  = .true.    ! #LOLO!  s-coordinate (standard jacobian formulation)
 /
 !-----------------------------------------------------------------------
 !namdyn_spg    !   surface pressure gradient   (CPP key only)
@@ -507,9 +531,9 @@
 !-----------------------------------------------------------------------
    rn_ediff    =   0.1     !  coef. for vertical eddy coef. (avt=rn_ediff*mxl*sqrt(e) )
    rn_ediss    =   0.7     !  coef. of the Kolmogoroff dissipation
-   rn_ebb      =  60.      ! #LOLO?  coef. of the surface input of tke (=67.83 suggested when ln_mxl0=T)
+   rn_ebb      =   67.83   !  coef. of the surface input of tke (=67.83 suggested when ln_mxl0=T)
    rn_mxl0     =   0.01    !  surface  buoyancy lenght scale minimum value (0.04)
-   nn_etau     =   1       ! #LOLO? (will help get shalower LabSea MLDs) penetration of tke below the mixed layer (ML) due to internal & intertial waves
+   nn_etau     =   1       ! #LOLO! (will help get shalower LabSea MLDs) penetration of tke below the mixed layer (ML) due to internal & intertial waves
                            !        = 0 no penetration
                            !        = 1 add a tke source below the ML
                            !        = 2 add a tke source just at the base of the ML
@@ -518,8 +542,9 @@
 !-----------------------------------------------------------------------
 &namzdf_ddm    !   double diffusive mixing parameterization             ("key_zdfddm")
 !-----------------------------------------------------------------------
-   rn_avts     = 1.e-4     !  maximum avs (vertical mixing on salinity)
-   rn_hsbfr    = 1.6       !  heat/salt buoyancy flux ratio
+!!! #LOLO: not used  (key_zdfddm not used!)
+!   rn_avts     = 1.e-4     !  maximum avs (vertical mixing on salinity)
+!   rn_hsbfr    = 1.6       !  heat/salt buoyancy flux ratio
 /
 !-----------------------------------------------------------------------
 &namzdf_tmx    !   tidal mixing parameterization                        ("key_zdftmx")

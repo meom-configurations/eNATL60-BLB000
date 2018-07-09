@@ -16,7 +16,7 @@
    nlay_i         =    2           !  number of ice  layers
    nlay_s         =    1           !  number of snow layers (only 1 is working)
    cn_icerst_in  = "restart_ice"   !  suffix of ice restart name (input)
-   cn_icerst_indir = "."           !  directory from which to read input ice restarts
+   cn_icerst_indir = './rstrt_in'           !  directory from which to read input ice restarts
    cn_icerst_out = "restart_ice"   !  suffix of ice restart name (output)
    cn_icerst_outdir = "."          !  directory in which to write output ice restarts
    ln_limdyn     = .true.          !  ice dynamics (T) or thermodynamics only (F)
@@ -60,8 +60,8 @@
                                    !     1: Rothrock_75   P = Cf*coeff*integral(wr.h^2)    
    ln_icestr_bvf  =    .false.     !  ice strength function brine volume (T) or not (F)     
    rn_pe_rdg      =   17.0         !  ridging work divided by pot. energy change in ridging, if nn_icestr = 1
-   rn_pstar       =    2.0e+04     !  ice strength thickness parameter (N/m2), nn_icestr = 0 
-   rn_crhg        =   20.0         !  ice strength conc. parameter (-), nn_icestr = 0       
+   rn_pstar       =    3.0e+04     ! #JMM ice strength thickness parameter (N/m2), nn_icestr = 0
+  rn_crhg        =   20.0         !  ice strength conc. parameter (-), nn_icestr = 0       
    rn_cio         =    5.0e-03     !  ice-ocean drag coefficient           (-)             
    rn_creepl      =    1.0e-12     !  creep limit (s-1)                                   
    rn_ecc         =    2.0         !  eccentricity of the elliptical yield curve          
@@ -72,7 +72,7 @@
 !------------------------------------------------------------------------------
 &namicehdf     !   Ice horizontal diffusion
 !------------------------------------------------------------------------------
-   nn_ahi0        =    2           !  horizontal diffusivity computation
+   nn_ahi0        =  2          !  horizontal diffusivity computation
                                    !    -1: no diffusion (bypass limhdf)
                                    !     0: use rn_ahi0_ref
                                    !     1: use rn_ahi0_ref x mean grid cell length / ( 2deg mean grid cell length )
@@ -106,9 +106,9 @@
                                    !     4: activate lateral melting only    --- temporary option
   ln_it_qnsice = .true.            !  iterate the surface non-solar flux with surface temperature (T) or not (F)
 /
-!------------------------------------------------------------------------------
-&namicesal     !   Ice salinity
-!------------------------------------------------------------------------------
+!-----------------------------------------------------------------------
+&namicesal     !   ice salinity
+!-----------------------------------------------------------------------
    nn_icesal   =  2                !  ice salinity option
                                    !     1: constant ice salinity (S=rn_icesal)
                                    !     2: varying salinity parameterization S(z,t)
