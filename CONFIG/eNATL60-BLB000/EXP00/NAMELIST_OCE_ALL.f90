@@ -25,13 +25,13 @@
 !-----------------------------------------------------------------------
    nn_no       =       0   !  job number (no more used...)
    cn_exp      =  'eNATL60-BLB000'
-   nn_it000    =    1   !  first time step
-   nn_itend    =    60   !  last  time step (std 5475)
-   nn_date0    =    20080101   !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
+   nn_it000    =    10801 !  first time step
+   nn_itend    =    21600 !  last  time step (std 5475)
+   nn_date0    =    20080106 !  date at nit_0000 (format yyyymmdd) used if ln_rstart=F or (ln_rstart=T and nn_rstctl=0 or 1)
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
-   ln_rstart   = .false.   !  start from rest (F) or from a restart file (T)
+   ln_rstart   = .true.    !  start from rest (F) or from a restart file (T)
    nn_euler    =       1   !  = 0 : start with forward time step if ln_rstart=T
-   nn_rstctl   =       2   !  restart control ==> activated only if ln_rstart=T
+   nn_rstctl   =       2   !  restart control => activated only if ln_rstart = T
                            !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
                            !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
                            !    = 2 nn_date0 read in restart  ; nn_it000 : check consistancy between namelist and restart
@@ -41,9 +41,9 @@
    cn_ocerst_outdir = '.'      !  directory in which to write output ocean restarts
    nn_istate   =       0   !  output the initial state (1) or not (0)
    ln_rst_list = .false.   !  output restarts at list of times using nn_stocklist (T) or at set frequency with nn_stock (F)
-   nn_stock    =    1440   !  frequency of creation of a restart file (modulo referenced to 1)
+   nn_stock    =   10800    ! 5d at dt=40s  frequency of creation of a restart file (modulo referenced to 1)
    nn_stocklist = 0,0,0,0,0,0,0,0,0,0 ! List of timesteps when a restart file is to be written
-   nn_write    =    1440   !  frequency of write in the output file   (modulo referenced to nn_it000)
+   nn_write    =   10800    ! 5d at dt=40s  frequency of write in the output file   (modulo referenced to nn_it000)
    ln_dimgnnn  = .false.   !  DIMG file format: 1 file for all processors (F) or by processor (T)
    ln_mskland  = .false.   !  mask land points in NetCDF outputs (costly: + ~15%)
    ln_cfmeta   = .false.   !  output additional data to netCDF files required for compliance with the CF metadata standard
@@ -123,11 +123,11 @@
    rn_bathy    =    0.     !  value of the bathymetry. if (=0) bottom flat at jpkm1
    nn_closea   =    0      !  remove (=0) or keep (=1) closed seas and lakes (ORCA)
    nn_msh      =    0      !  create (=1) a mesh file or not (=0)
-   rn_hmin     =   -3.     ! #LOLO!  min depth of the ocean (>0) or min number of ocean level (<0)
+   rn_hmin     =   -16.    ! #LOLO!  min depth of the ocean (>0) or min number of ocean level (<0)
    rn_e3zps_min=   25.     !  partial step thickness is set larger than the minimum of
    rn_e3zps_rat=    0.2    !  rn_e3zps_min and rn_e3zps_rat*e3t, with 0<rn_e3zps_rat<1
                            !
-   rn_rdt      =   60.     !  time step for the dynamics (and tracer if nn_acc=0)
+   rn_rdt      =   40.     ! #LOLO! time step for the dynamics (and tracer if nn_acc=0)
    rn_atfp     =    0.1    !  asselin time filter parameter
    nn_acc      =    0      !  acceleration of convergence : =1      used, rdt < rdttra(k)
                                  !                          =0, not used, rdt = rdttra
@@ -162,13 +162,13 @@
 !-----------------------------------------------------------------------
 &namsplit      !   time splitting parameters                            ("key_dynspg_ts")
 !-----------------------------------------------------------------------
-   ln_bt_fw      =    .false.          ! #LOLO?  Forward integration of barotropic equations
+   ln_bt_fw      =    .false.          ! #LOLO! <needs u2b et v2b in restarts...>  Forward integration of barotropic equations
    ln_bt_av      =    .true.           !  Time filtering of barotropic variables
    ln_bt_nn_auto =    .true.           !  Set nn_baro automatically to be just below
                                        !  a user defined maximum courant number (rn_bt_cmax)
    nn_baro       =    30               ! #LOLO!  Number of iterations of barotropic mode
                                        !  during rn_rdt seconds. Only used if ln_bt_nn_auto=F
-   rn_bt_cmax    =    0.7              ! #LOLO! Maximum courant number allowed if ln_bt_nn_auto=T 
+   rn_bt_cmax    =    0.7              ! #LOLO! Maximum courant number allowed if ln_bt_nn_auto=T
    nn_bt_flt     =    2                ! #LOLO! Time filter choice (follow Chanut and Jouano advice...)
                                        !  = 0 None
                                        !  = 1 Boxcar over   nn_baro barotropic steps
@@ -207,7 +207,7 @@
    sn_sal  = 'vosaline_GLORYS12V1-eNATL60_2008.nc', -12     ,'vosaline',   .true.    , .true. ,'yearly'  ,    ''    ,    ''    ,    ''
    !
    cn_dir        = './'     !  root directory for the location of the runoff files
-   ln_tsd_init   = .true.   !  Initialisation of ocean T & S with T & S input data (T) or not (F)
+   ln_tsd_init   = .false.  ! Initialisation of ocean T & S with T &S input data (T) or not (F)
    ln_tsd_tradmp = .false.  !  damping of ocean T & S toward T & S input data (T) or not (F)
 /
 !!======================================================================
@@ -232,7 +232,7 @@
 !-----------------------------------------------------------------------
 &namsbc        !   Surface Boundary Condition (surface module)
 !-----------------------------------------------------------------------
-   nn_fsbc     = 2         ! #LOLO!  frequency of surface boundary condition computation
+   nn_fsbc     = 6         ! #LOLO! (4 min @ dt=40s)  frequency of surface boundary condition computation
                            !     (also = the frequency of sea-ice model call)
    ln_ana      = .false.   !  analytical formulation                    (T => fill namsbc_ana )
    ln_flx      = .false.   !  flux formulation                          (T => fill namsbc_flx )
@@ -245,7 +245,7 @@
                            !  =0 no opa-sas OASIS coupling: default single executable configuration
                            !  =1 opa-sas OASIS coupling: multi executable configuration, OPA component
                            !  =2 opa-sas OASIS coupling: multi executable configuration, SAS component 
-   ln_apr_dyn  = .false.   ! #LOLO?  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
+   ln_apr_dyn  = .true.    ! #LOLO!  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
    nn_ice      = 2         !  =0 no ice boundary condition   ,
                            !  =1 use observed ice-cover      ,
                            !  =2 ice-model used                         ("key_lim3" or "key_lim2")
@@ -259,7 +259,7 @@
                            !  2 = bg03 parametrisation   3 = rnf file for isf
                            !  4 = ISF fwf specified
                            !  option 1 and 4 need ln_isfcav = .true. (domzgr)
-   ln_ssr      = .true.    !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
+   ln_ssr      = .true.    ! #LOLO! Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
    nn_fwb      = 2         ! #LOLO! FreshWater Budget: =0 unchecked
                            !     =1 global mean of e-p-r set to zero at each time step
                            !     =2 annual global mean of e-p-r set to zero
@@ -399,8 +399,8 @@
 !              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
    sn_chl      ='CHLA_ESACCI-OC-L3S-4km-eNATL60_y2010', -1    , 'CHLA'    ,   .true.     , .true. , 'yearly'  , ''       , ''       , ''
    cn_dir      = './'      !  root directory for the location of the runoff files
-   ln_traqsr   = .true.    !  Light penetration (T) or not (F)
-   ln_qsr_rgb  = .true.    !  RGB (Red-Green-Blue) light penetration
+   ln_traqsr   = .true.    ! #LOLO! Light penetration (T) or not (F)
+   ln_qsr_rgb  = .true.    ! #LOLO! RGB (Red-Green-Blue) light penetration
    ln_qsr_2bd  = .false.   !  2 bands              light penetration
    ln_qsr_bio  = .false.   !  bio-model light penetration
    nn_chldta   =      0    ! #LOLO!  RGB : 2D Chl data (=1), 3D Chl data (=2) or cst value (=0)
@@ -421,9 +421,9 @@
    sn_dep_rnf  = 'runoffs'            ,         0         , 'rodepth' ,   .false.    , .true. , 'yearly'  , ''       , ''       , ''
 
    cn_dir       = './'      !  root directory for the location of the runoff files
-   ln_rnf_mouth = .true.     ! #LOLO!  specific treatment at rivers mouths
-   rn_hrnf      =  15.e0     !  depth over which enhanced vertical mixing is used
-   rn_avt_rnf   =   2.e-3    ! #LOLO! value of the additional vertical mixing coef. [m2/s]
+   ln_rnf_mouth = .true.    ! #LOLO!  specific treatment at rivers mouths
+   rn_hrnf      =  15.e0    !  depth over which enhanced vertical mixing is used
+   rn_avt_rnf   =   2.e-3   ! #LOLO! value of the additional vertical mixing coef. [m2/s]
    rn_rfact     =   1.e0    !  multiplicative factor for runoff
    ln_rnf_depth = .false.    !  read in depth information for runoff
    ln_rnf_tem   = .false.    !  read in temperature information for runoff
@@ -468,9 +468,8 @@
 !-----------------------------------------------------------------------
 !              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   sn_apr      = 'patm'      ,         -1        ,'somslpre',    .true.     , .true. , 'yearly'  ,  ''      ,   ''     , ''
-
-   cn_dir      = './'       !  root directory for the location of the bulk files
+   sn_apr      = 'msl_ERAinterim',        3      ,   'MSL'   ,    .true.    ,.false. , 'yearly'  ,'weight_bilinear_512x256-eNATL60.nc','',''
+   cn_dir      = './FATM/'  !  root directory for the location of the bulk files
    rn_pref     = 101000.    !  reference atmospheric pressure   [N/m2]/
    ln_ref_apr  = .false.    !  ref. pressure: global mean Patm (T) or a constant (F)
    ln_apr_obc  = .false.    !  inverse barometer added to OBC ssh data
@@ -684,7 +683,7 @@
 !!======================================================================
 !
 !-----------------------------------------------------------------------
-&nambfr        !   bottom friction
+&nambfr        !   bottom friction #LOLO????
 !-----------------------------------------------------------------------
    nn_bfr      =    2      !  type of bottom friction :   = 0 : free slip,  = 1 : linear friction
                            !                              = 2 : nonlinear friction
@@ -839,7 +838,7 @@
    nn_dynkeg     = 1        ! #LOLO? scheme for grad(KE): =0   C2  ;  =1   Hollingsworth correction
    ln_dynadv_cen2= .false.  !  flux form - 2nd order centered scheme
    ln_dynadv_ubs = .true.   ! #LOLO!  flux form - 3rd order UBS      scheme
-   ln_dynzad_zts = .false.  ! <#LOLO? [requires vector form!]> Use (T) sub timestepping for vertical momentum advection
+   ln_dynzad_zts = .false.  ! #LOLO? [requires vector form!]> Use (T) sub timestepping for vertical momentum advection
 /
 !-----------------------------------------------------------------------
 &nam_vvl    !   vertical coordinate options
@@ -858,18 +857,18 @@
 !-----------------------------------------------------------------------
 &namdyn_vor    !   option of physics/algorithm (not control by CPP keys)
 !-----------------------------------------------------------------------
-   ln_dynvor_ene = .false. !  enstrophy conserving scheme
-   ln_dynvor_ens = .false. !  energy conserving scheme
+   ln_dynvor_ene = .true.  !  energy conserving scheme #LOLO! => after discussion with Gurvan, no sense to use "een" with UBS (because flux form)!!! 
+   ln_dynvor_ens = .false. !  enstrophy conserving scheme GM!
    ln_dynvor_mix = .false. !  mixed scheme
-   ln_dynvor_een = .false.     ! #LOLO?  energy & enstrophy scheme  
-   ln_dynvor_een_old = .true.  ! #LOLO?  energy & enstrophy scheme - original formulation
+   ln_dynvor_een = .false.     ! #LOLO!  energy & enstrophy scheme  
+   ln_dynvor_een_old = .false.  ! #LOLO!  energy & enstrophy scheme - original formulation
 /
 !-----------------------------------------------------------------------
 &namdyn_hpg    !   Hydrostatic pressure gradient option
 !-----------------------------------------------------------------------
    ln_hpg_zco  = .false.   !  z-coordinate - full steps  
    ln_hpg_zps  = .false.   !  z-coordinate - partial steps (interpolation)
-   ln_hpg_sco  = .true.    ! #LOLO!  s-coordinate (standard jacobian formulation)
+   ln_hpg_sco  = .true.    ! #LOLO! <because VVL on> s-coordinate (standard jacobian formulation)
    ln_hpg_isf  = .false.   !  s-coordinate (sco ) adapted to isf
    ln_hpg_djc  = .false.   !  s-coordinate (Density Jacobian with Cubic polynomial)
    ln_hpg_prj  = .false.   !  s-coordinate (Pressure Jacobian scheme)
@@ -887,16 +886,16 @@
 &namdyn_ldf    !   lateral diffusion on momentum
 !-----------------------------------------------------------------------
    !                       !  Type of the operator :
-   ln_dynldf_lap    =  .false.  ! #LOLO! laplacian operator
-   ln_dynldf_bilap  =  .false.  ! #LOLO!  bilaplacian operator
+   ln_dynldf_lap    = .false.   ! #LOLO! laplacian operator
+   ln_dynldf_bilap  = .false.   ! #LOLO!  bilaplacian operator
    !                       !  Direction of action  :
    ln_dynldf_level  =  .false.  !  iso-level
    ln_dynldf_hor    =  .true.   !  horizontal (geopotential)            (require "key_ldfslp" in s-coord.)
    ln_dynldf_iso    =  .false.  !  iso-neutral                          (require "key_ldfslp")
    !                       !  Coefficient
-   rn_ahm_0_lap     =     0.    !  horizontal laplacian eddy viscosity   [m2/s]
+   rn_ahm_0_lap     =    50.   !  horizontal laplacian eddy viscosity   [m2/s]
    rn_ahmb_0        =     0.    !  background eddy viscosity for ldf_iso [m2/s]
-   rn_ahm_0_blp     =     0.    !  horizontal bilaplacian eddy viscosity [m4/s]
+   rn_ahm_0_blp     = -1.e9   !  horizontal bilaplacian eddy viscosity [m4/s]
    rn_cmsmag_1      =     3.    !  constant in laplacian Smagorinsky viscosity
    rn_cmsmag_2      =     3     !  constant in bilaplacian Smagorinsky viscosity
    rn_cmsh          =     1.    !  1 or 0 , if 0 -use only shear for Smagorinsky viscosity

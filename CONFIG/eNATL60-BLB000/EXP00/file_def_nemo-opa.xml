@@ -33,7 +33,7 @@
       <!-- <field field_ref="qt"           name="sohefldo"  /> #LOLO: qt == qsr+qns / checked!-->
       <!-- <field field_ref="qsr"          name="qsr"       /> -->
       <!-- <field field_ref="qns"          name="qns"       />-->
-      <field field_ref="qt_oce"       name="qt_oce"    /> 
+      <field field_ref="qt_oce"       name="qt_oce"    />
       <field field_ref="qsr_oce"      name="qsr_oce"   />
       <!-- <field field_ref="qns_oce"      name="qns_oce"   /> #LOLO: accesible via qns_oce = qt_oce - qsr_oce ! -->
       <!-- <field field_ref="qla_oce"      name="solhflup"  /> -->
@@ -61,23 +61,28 @@
 
   <!-- S A V E D   E V E R Y   5 D -->
 
-
   <file_group id="5d"  output_freq="5d"  output_level="10" enabled=".TRUE.">
 
     <file id="file21" name_suffix="_gridT" description="ocean T grid variables" compression_level="5" >
       <field field_ref="e3t"             />
-      <field field_ref="toce"         name="votemper" operation="instant" freq_op="5d" > @toce_e3t / @e3t </field>
-      <field field_ref="soce"         name="vosaline" operation="instant" freq_op="5d" > @soce_e3t / @e3t </field>
+      <field field_ref="toce"         name="votemper"  > @toce_e3t / @e3t </field>
+      <field field_ref="soce"         name="vosaline"  > @soce_e3t / @e3t </field>
+      <!--
+          <field field_ref="toce"         name="votemper" operation="instant" freq_op="5d" > @toce_e3t / @e3t </field>
+          <field field_ref="soce"         name="vosaline" operation="instant" freq_op="5d" > @soce_e3t / @e3t </field>
+      -->
     </file>
 
     <file id="file22" name_suffix="_gridU" description="ocean U grid variables" compression_level="5" >
       <!-- <field field_ref="e3u" /> -->
-      <field field_ref="uoce"         name="vozocrtx" operation="instant" freq_op="5d" > @uoce_e3u / @e3u </field>
+      <field field_ref="uoce"         name="vozocrtx" > @uoce_e3u / @e3u </field>
+      <!--<field field_ref="uoce"         name="vozocrtx" operation="instant" freq_op="5d" > @uoce_e3u / @e3u </field> -->
     </file>
 
     <file id="file23" name_suffix="_gridV" description="ocean V grid variables" compression_level="5" >
       <!-- <field field_ref="e3v" /> -->
-      <field field_ref="voce"         name="vomecrty" operation="instant" freq_op="5d" > @voce_e3v / @e3v </field>
+      <field field_ref="voce"         name="vomecrty" > @voce_e3v / @e3v </field>
+      <!-- <field field_ref="voce"         name="vomecrty" operation="instant" freq_op="5d" > @voce_e3v / @e3v </field> -->
     </file>
 
     <file id="file24" name_suffix="_gridW" description="ocean W grid variables" compression_level="5" >

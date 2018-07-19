@@ -12,11 +12,11 @@
 !------------------------------------------------------------------------------
 &namicerun     !   Generic parameters
 !------------------------------------------------------------------------------
-   jpl            =    5           !  number of ice  categories
+   jpl            =    1           ! #LOLO!  number of ice  categories
    nlay_i         =    2           !  number of ice  layers
    nlay_s         =    1           !  number of snow layers (only 1 is working)
    cn_icerst_in  = "restart_ice"   !  suffix of ice restart name (input)
-   cn_icerst_indir = './rstrt_in'           !  directory from which to read input ice restarts
+   cn_icerst_indir = './rstrt_in'  !  directory from which to read input ice restarts
    cn_icerst_out = "restart_ice"   !  suffix of ice restart name (output)
    cn_icerst_outdir = "."          !  directory in which to write output ice restarts
    ln_limdyn     = .true.          !  ice dynamics (T) or thermodynamics only (F)
@@ -72,7 +72,7 @@
 !------------------------------------------------------------------------------
 &namicehdf     !   Ice horizontal diffusion
 !------------------------------------------------------------------------------
-   nn_ahi0        =  2          !  horizontal diffusivity computation
+   nn_ahi0        =  -1            ! #LOLO! Clem Rousset! => coute cher pour rien! horizontal diffusivity computation
                                    !    -1: no diffusion (bypass limhdf)
                                    !     0: use rn_ahi0_ref
                                    !     1: use rn_ahi0_ref x mean grid cell length / ( 2deg mean grid cell length )
@@ -100,15 +100,15 @@
                                    !     1: k = k0 + beta1.S/T - beta2.T (Pringle et al., 2007)
    rn_cdsn     = 0.31              !  thermal conductivity of the snow (0.31 W/m/K, Maykut and Untersteiner, 1971)
                                    !  Obs: 0.1-0.5 (Lecomte et al, JAMES 2013)
-   nn_monocat  = 0                 !  virtual ITD mono-category parameterizations (1, jpl = 1 only) or not (0)
+   nn_monocat  = 1                 ! #LOLO! Clem Rousset! virtual ITD mono-category parameterizations (1, jpl = 1 only) or not (0)
                                    !     2: simple piling instead of ridging --- temporary option
                                    !     3: activate G(he) only              --- temporary option
                                    !     4: activate lateral melting only    --- temporary option
   ln_it_qnsice = .true.            !  iterate the surface non-solar flux with surface temperature (T) or not (F)
 /
-!-----------------------------------------------------------------------
-&namicesal     !   ice salinity
-!-----------------------------------------------------------------------
+!------------------------------------------------------------------------------
+&namicesal     !   Ice salinity
+!------------------------------------------------------------------------------
    nn_icesal   =  2                !  ice salinity option
                                    !     1: constant ice salinity (S=rn_icesal)
                                    !     2: varying salinity parameterization S(z,t)
@@ -131,8 +131,8 @@
                                    !     0: linear (Thorndike et al, 1975)
                                    !     1: exponential (Lipscomb, 2007
    rn_gstar    =   0.15            !  fractional area of thin ice being ridged (nn_partfun = 0)
-   rn_astar    =   0.05            !  exponential measure of ridging ice fraction (nn_partfun = 1)
-   rn_hstar    = 100.0             !  determines the maximum thickness of ridged ice (m) (Hibler, 1980)
+   rn_astar    = 0.03             ! #LOLO! Clem Rousset! exponential measure of ridging ice fraction (nn_partfun = 1)
+   rn_hstar    = 25.0             ! #LOLO! Clem Rousset!  determines the maximum thickness of ridged ice (m) (Hibler, 1980)
    ln_rafting  =   .true.          !  rafting activated (T) or not (F)
    rn_hraft    =   0.75            !  threshold thickness for rafting (m)
    rn_craft    =   5.0             !  squeezing coefficient used in the rafting function
